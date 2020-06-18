@@ -1,0 +1,25 @@
+{
+  "name": "mtasa-api",
+  "version": "0.1.0",
+  "description": "An module to capture MTA Server info",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grupo-haze/mtasa-api.git"
+  },
+  "keywords": [
+    "mtasa",
+    "mta",
+    "api",
+    "typescript"
+  ],
+  "author": "Jeffyter Saraiva <iJhefe>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/grupo-haze/mtasa-api/issues"
+  },
+  "homepage": "https://github.com/grupo-haze/mtasa-api#readme"
+}
