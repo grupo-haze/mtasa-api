@@ -1,8 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import axios from 'axios'
-import {IMTAError, IMTAServerInfo} from './interfaces'
-import {type} from "os";
+import {IMTAError, IMTAGetBy, IMTAServerInfo} from './interfaces'
 
 class MtaAPI {
   private ip: string = ''
@@ -13,17 +12,33 @@ class MtaAPI {
   private lastTime: number = 0
   private interval: any = false
   private baseDir: string = path.resolve(__dirname)
-  private selfData: Array<IMTAServerInfo> = []
   private builded: boolean = false
 
   public debug: boolean = true
   public error: IMTAError | undefined
   public apiURL: string = 'https://mtasa.com/api/'
 
-  public build (): void {
+  public getAll () {
+    return this.data
+  }
+
+  public getBy(opts: IMTAGetBy = { ip: '', port: 0 }) {
+    return this.data?.filter(d => {
+      if (!opts.port) {
+        return d.ip === opts.ip
+      }
+
+      return d.ip === opts.ip && d.port === opts.port
+    })
+  }
+
+  public async build () {
+    if (this.existsJSON()) {
+      await this.readJSON()
+    }
+
     if (!this.builded) {
-      this.startTick()
-      this.builded = true
+      await this.startTick()
     }
   }
 
@@ -60,19 +75,20 @@ class MtaAPI {
     })
   }
 
-  private startTick (): void {
+  private async startTick () {
     if (this.interval) {
       clearInterval(this.interval)
     }
 
-    this.buildData()
-      .then(() => {
-        this.interval = setInterval(async () => { await this.buildData() }, this.seconds2Time(this.waitTime))
-        this.useDebug(`Tick started with ${this.waitTime} seconds`)
-      })
-      .catch(e => {
-        throw new Error(e)
-      })
+    try {
+      await this.buildData()
+
+      this.interval = setInterval(async () => { await this.buildData() }, this.seconds2Time(this.waitTime))
+      this.useDebug(`Tick started with ${this.waitTime} seconds`)
+    } catch (e) {
+      this.buildError(e)
+      throw new Error(e)
+    }
   }
 
   private async buildData () {
@@ -80,12 +96,14 @@ class MtaAPI {
       await this.requestAll()
       if (this.existsJSON()) {
         await this.readJSON()
+        this.builded = true
 
         if (this.checkToGenerateNewJSON()) {
           this.writeJSON(this.data)
         }
       } else {
         this.writeJSON(this.data)
+        this.builded = true
       }
     } catch (e) {
       return e
@@ -118,7 +136,7 @@ class MtaAPI {
         data: data
       })
 
-      fs.writeFile(path.resolve(this.baseDir, 'servers.json'), toWrite, err => {
+      fs.writeFile(path.resolve(this.baseDir, 'servers.json'), toWrite, 'utf8', err => {
         if (err) {
           this.buildError(err)
           this.useDebug("Can't write servers.json file")
@@ -174,7 +192,7 @@ class MtaAPI {
     this.useDebug('Starting loop to mount IMTAServerInfo')
     data.forEach(value => {
       const dt: IMTAServerInfo = {
-        name: value.name || '',
+        name: value.name ,
         ip: value.ip || '',
         maxplayers: value.maxplayers || 0,
         keep: value.keep === 1,
@@ -214,13 +232,10 @@ class MtaAPI {
     return false
   }
 
-  private setWaitTime (seconds: number) {
+  public setTickTime (seconds: number) {
     this.waitTime = this.seconds2Time(seconds)
+    this.useDebug(`In the next tick 'waitTime' will be updated to ${seconds} seconds`)
   }
 }
 
 export default MtaAPI
-
-const mta = new MtaAPI()
-
-mta.build()

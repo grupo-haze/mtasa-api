@@ -3,6 +3,11 @@ interface IMTAError {
   type: string
 }
 
+interface IMTAGetBy {
+  ip: string,
+  port?: number
+}
+
 interface IMTAServerInfo {
   name: string,
   ip: string,
@@ -15,6 +20,7 @@ interface IMTAServerInfo {
 }
 
 export {
+  IMTAGetBy,
   IMTAServerInfo,
   IMTAError
 }
