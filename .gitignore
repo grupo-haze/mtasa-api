@@ -124,3 +124,4 @@ dist
 .idea/mtasa-api.iml
 .idea/vcs.xml
 package-lock.json
+src/servers.json
