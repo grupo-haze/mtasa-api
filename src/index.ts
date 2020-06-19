@@ -2,6 +2,7 @@ import path from 'path'
 import fs from 'fs'
 import axios from 'axios'
 import {IMTAError, IMTAServerInfo} from './interfaces'
+import {type} from "os";
 
 class MtaAPI {
   private ip: string = ''
@@ -13,45 +14,32 @@ class MtaAPI {
   private interval: any = false
   private baseDir: string = path.resolve(__dirname)
   private selfData: Array<IMTAServerInfo> = []
+  private builded: boolean = false
 
   public debug: boolean = true
   public error: IMTAError | undefined
   public apiURL: string = 'https://mtasa.com/api/'
 
-  constructor () {
-    this.initInterval()
-  }
-
-  private initInterval () {
-    if (this.interval) {
-      clearInterval(this.interval)
-    }
-
-    this.buildData()
-      .then(() => {
-        this.interval = setInterval(this.buildData, this.seconds2Miliseconds(this.waitTime))
-        this.useDebug(`Tick started with ${this.waitTime} seconds`)
-      })
-  }
-
-  private async buildData () {
-    try {
-      await this.getAll()
-      if (this.existsJSON()) {
-        await this.readJSON()
-
-        if (this.checkToGenerateNewJSON()) {
-          this.writeJSON(this.data)
-        }
-      } else {
-        this.writeJSON(this.data)
-      }
-    } catch (e) {
-      throw e
+  public build (): void {
+    if (!this.builded) {
+      this.startTick()
+      this.builded = true
     }
   }
 
-  public getAll () {
+  public isBuilded (): boolean {
+    return this.builded
+  }
+
+  public time2Seconds (time: number): number {
+    return time / 1000
+  }
+
+  public seconds2Time (seconds: number): number {
+    return seconds * 1000
+  }
+
+  private requestAll (): Promise<any> {
     return new Promise((resolve, reject) => {
       this.requestStartsIn = Date.now()
       this.useDebug('Requesting all...')
@@ -72,19 +60,51 @@ class MtaAPI {
     })
   }
 
+  private startTick (): void {
+    if (this.interval) {
+      clearInterval(this.interval)
+    }
+
+    this.buildData()
+      .then(() => {
+        this.interval = setInterval(async () => { await this.buildData() }, this.seconds2Time(this.waitTime))
+        this.useDebug(`Tick started with ${this.waitTime} seconds`)
+      })
+      .catch(e => {
+        throw new Error(e)
+      })
+  }
+
+  private async buildData () {
+    try {
+      await this.requestAll()
+      if (this.existsJSON()) {
+        await this.readJSON()
+
+        if (this.checkToGenerateNewJSON()) {
+          this.writeJSON(this.data)
+        }
+      } else {
+        this.writeJSON(this.data)
+      }
+    } catch (e) {
+      return e
+    }
+  }
+
   /**
    * Returns time in seconds
    * @return number
    */
   public lastRequestTime (): number {
-    return ((this.requestEndsIn - this.requestStartsIn) / 1000) || 0
+    return ((this.requestEndsIn - this.requestStartsIn)) || 0
   }
 
-  public checkToGenerateNewJSON () {
+  private checkToGenerateNewJSON () {
     const time = Date.now() - this.lastTime
-    this.useDebug(`JSON file was generated at ${this.time2Seconds(time)} ago`)
+    this.useDebug(`JSON file was generated at ${this.time2Seconds(time)} seconds ago`)
 
-    return this.time2Seconds(time) > this.waitTime
+    return this.time2Seconds(time) >= this.waitTime
   }
 
   private writeJSON(data: Array<IMTAServerInfo> | undefined) {
@@ -149,16 +169,9 @@ class MtaAPI {
     }
   }
 
-  private time2Seconds (time: number) {
-    return time / 1000
-  }
-
-  private seconds2Miliseconds (seconds: number) {
-    return seconds * 1000
-  }
-
   private buildServerInfo (data: Array<any>) : Array<IMTAServerInfo> {
     const temp: Array<IMTAServerInfo> = []
+    this.useDebug('Starting loop to mount IMTAServerInfo')
     data.forEach(value => {
       const dt: IMTAServerInfo = {
         name: value.name || '',
@@ -173,6 +186,8 @@ class MtaAPI {
 
       temp.push(dt)
     })
+
+    this.useDebug('Loop ends')
     this.data = temp
 
     return this.data
@@ -200,10 +215,12 @@ class MtaAPI {
   }
 
   private setWaitTime (seconds: number) {
-    this.waitTime = this.seconds2Miliseconds(seconds)
+    this.waitTime = this.seconds2Time(seconds)
   }
 }
 
 export default MtaAPI
 
 const mta = new MtaAPI()
+
+mta.build()
