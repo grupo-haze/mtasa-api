@@ -240,10 +240,3 @@ class MtaAPI {
 }
 
 export default MtaAPI
-
-const mta = new MtaAPI()
-
-mta.build()
-.then(() => {
-
-})
