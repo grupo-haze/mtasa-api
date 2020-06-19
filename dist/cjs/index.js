@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,9 +35,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import path from 'path';
-import fs from 'fs';
-import axios from 'axios';
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var path_1 = __importDefault(require("path"));
+var fs_1 = __importDefault(require("fs"));
+var axios_1 = __importDefault(require("axios"));
 var MtaAPI = /** @class */ (function () {
     function MtaAPI() {
         this.ip = '';
@@ -45,7 +50,7 @@ var MtaAPI = /** @class */ (function () {
         this.waitTime = 30;
         this.lastTime = 0;
         this.interval = false;
-        this.baseDir = path.resolve(__dirname);
+        this.baseDir = path_1.default.resolve(__dirname);
         this.builded = false;
         this.debug = true;
         this.apiURL = 'https://mtasa.com/api/';
@@ -98,7 +103,7 @@ var MtaAPI = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             _this.requestStartsIn = Date.now();
             _this.useDebug('Requesting all...');
-            axios.get(_this.apiURL)
+            axios_1.default.get(_this.apiURL)
                 .then(function (response) {
                 var data = response.data;
                 _this.useDebug('Request all ends');
@@ -202,7 +207,7 @@ var MtaAPI = /** @class */ (function () {
                 time: Date.now(),
                 data: data
             });
-            fs.writeFile(path.resolve(this.baseDir, 'servers.json'), toWrite, 'utf8', function (err) {
+            fs_1.default.writeFile(path_1.default.resolve(this.baseDir, 'servers.json'), toWrite, 'utf8', function (err) {
                 if (err) {
                     _this.buildError(err);
                     _this.useDebug("Can't write servers.json file");
@@ -221,7 +226,7 @@ var MtaAPI = /** @class */ (function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
             _this.useDebug('Starting to read JSON File');
-            var stream = fs.readFile(path.resolve(path.resolve(_this.baseDir, 'servers.json')), 'utf-8', function (err, data) {
+            var stream = fs_1.default.readFile(path_1.default.resolve(path_1.default.resolve(_this.baseDir, 'servers.json')), 'utf-8', function (err, data) {
                 if (err) {
                     _this.buildError(err);
                     reject(err);
@@ -244,7 +249,7 @@ var MtaAPI = /** @class */ (function () {
         });
     };
     MtaAPI.prototype.existsJSON = function () {
-        return fs.existsSync(path.resolve(this.baseDir, 'servers.json'));
+        return fs_1.default.existsSync(path_1.default.resolve(this.baseDir, 'servers.json'));
     };
     MtaAPI.prototype.useDebug = function (data) {
         if (this.debug) {
@@ -295,7 +300,7 @@ var MtaAPI = /** @class */ (function () {
     };
     return MtaAPI;
 }());
-export default MtaAPI;
+exports.default = MtaAPI;
 var mta = new MtaAPI();
 mta.build()
     .then(function () {

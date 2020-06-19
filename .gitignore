@@ -115,12 +115,6 @@ web_modules/
 .yarn/build-state.yml
 .pnp.*
 
-.idea/.gitignore
-.idea/dbnavigator.xml
-.idea/inspectionProfiles/
-.idea/misc.xml
-.idea/modules.xml
-.idea/mtasa-api.iml
-.idea/vcs.xml
+.idea
 package-lock.json
 src/servers.json

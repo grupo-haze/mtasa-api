@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import axios from 'axios'
-import {IMTAError, IMTAGetBy, IMTAServerInfo} from './interfaces'
+import { IMTAError, IMTAGetBy, IMTAServerInfo } from "./interfaces"
 
 class MtaAPI {
   private ip: string = ''
@@ -60,7 +60,7 @@ class MtaAPI {
       this.useDebug('Requesting all...')
 
       axios.get(this.apiURL)
-        .then(response => {
+        .then((response: { data: Array<object> }) => {
           const { data } = response
           this.useDebug('Request all ends')
 
@@ -69,8 +69,9 @@ class MtaAPI {
 
           resolve(this.buildServerInfo(data))
         })
-        .catch(e => {
-          reject(this.buildError(e))
+        .catch((e: any) => {
+          this.buildError(e)
+          reject(e)
         })
     })
   }
@@ -239,3 +240,10 @@ class MtaAPI {
 }
 
 export default MtaAPI
+
+const mta = new MtaAPI()
+
+mta.build()
+.then(() => {
+
+})
