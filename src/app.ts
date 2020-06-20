@@ -7,10 +7,11 @@ export default class MtaAPI {
   private data: IMTAServerInfo[] | undefined
   private requestStartsIn: number
   private requestEndsIn: number
-  public waitTime: number
+  private waitTime: number
   private lastTime: number
   private interval: any = false
   private readonly baseDir: string
+  private started: boolean
   private builded: boolean
 
   public debug: boolean
@@ -20,6 +21,7 @@ export default class MtaAPI {
   constructor () {
     this.baseDir = path.resolve(__dirname)
     this.builded = false
+    this.started = false
     this.lastTime = 0
     this.waitTime = 30
     this.requestStartsIn = 0
@@ -49,13 +51,14 @@ export default class MtaAPI {
     throw new Error('You should build first')
   }
 
-  public setTickTime (seconds: number) {
+  public setTick (seconds: number) {
     this.waitTime = this.seconds2Time(seconds)
     this.useDebug(`In the next tick 'waitTime' will be updated to ${seconds} seconds`)
   }
 
   public async build (): Promise<any> {
-    if (!this.builded) {
+    if (!this.started) {
+      this.started = true
       await this.startTick();
     }
   }
@@ -105,6 +108,7 @@ export default class MtaAPI {
     try {
       if (!this.existsJSON()) {
         await this.buildData()
+        this.builded = true
       } else {
         await this.readJSON()
         this.builded = true
@@ -120,22 +124,18 @@ export default class MtaAPI {
 
   private async buildData () {
     try {
-
       await this.requestAll()
       if (this.existsJSON()) {
         await this.readJSON()
-        this.builded = true
 
         if (this.checkToGenerateNewJSON()) {
           this.writeJSON(this.data)
         }
       } else {
         this.writeJSON(this.data)
-        this.builded = true;
       }
-      return true;
     } catch (e) {
-      return e
+      throw new Error(e)
     }
   }
 
