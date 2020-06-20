@@ -4,14 +4,14 @@ import axios from 'axios';
 import { IMTAError, IMTAGetBy, IMTAServerInfo } from "./interfaces";
 
 export default class MtaAPI {
-  private data: Array<IMTAServerInfo> | undefined;
-  private requestStartsIn: number;
-  private requestEndsIn: number;
-  public waitTime: number;
-  private lastTime: number;
-  private interval: any = false;
-  private readonly baseDir: string;
-  private builded: boolean;
+  private data: Array<IMTAServerInfo> | undefined
+  private requestStartsIn: number
+  private requestEndsIn: number
+  public waitTime: number
+  private lastTime: number
+  private interval: any = false
+  private readonly baseDir: string
+  private builded: boolean
 
   public debug: boolean
   public error: IMTAError | undefined
