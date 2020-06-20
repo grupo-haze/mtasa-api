@@ -3,10 +3,11 @@ export default class MtaAPI {
     private data;
     private requestStartsIn;
     private requestEndsIn;
-    waitTime: number;
+    private waitTime;
     private lastTime;
     private interval;
     private readonly baseDir;
+    private started;
     private builded;
     debug: boolean;
     error: IMTAError | undefined;
@@ -14,7 +15,7 @@ export default class MtaAPI {
     constructor();
     getAll(): IMTAServerInfo[] | undefined;
     getBy(opts?: IMTAGetBy): IMTAServerInfo[] | undefined;
-    setTickTime(seconds: number): void;
+    setTick(seconds: number): void;
     build(): Promise<any>;
     isBuilded(): boolean;
     time2Seconds(time: number): number;

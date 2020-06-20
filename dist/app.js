@@ -66,6 +66,7 @@ var MtaAPI = /** @class */ (function () {
         this.interval = false;
         this.baseDir = path.resolve(__dirname);
         this.builded = false;
+        this.started = false;
         this.lastTime = 0;
         this.waitTime = 30;
         this.requestStartsIn = 0;
@@ -92,7 +93,7 @@ var MtaAPI = /** @class */ (function () {
         }
         throw new Error('You should build first');
     };
-    MtaAPI.prototype.setTickTime = function (seconds) {
+    MtaAPI.prototype.setTick = function (seconds) {
         this.waitTime = this.seconds2Time(seconds);
         this.useDebug("In the next tick 'waitTime' will be updated to " + seconds + " seconds");
     };
@@ -101,7 +102,8 @@ var MtaAPI = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!!this.builded) return [3 /*break*/, 2];
+                        if (!!this.started) return [3 /*break*/, 2];
+                        this.started = true;
                         return [4 /*yield*/, this.startTick()];
                     case 1:
                         _a.sent();
@@ -159,6 +161,7 @@ var MtaAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.buildData()];
                     case 2:
                         _a.sent();
+                        this.builded = true;
                         return [3 /*break*/, 5];
                     case 3: return [4 /*yield*/, this.readJSON()];
                     case 4:
@@ -199,19 +202,17 @@ var MtaAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.readJSON()];
                     case 2:
                         _a.sent();
-                        this.builded = true;
                         if (this.checkToGenerateNewJSON()) {
                             this.writeJSON(this.data);
                         }
                         return [3 /*break*/, 4];
                     case 3:
                         this.writeJSON(this.data);
-                        this.builded = true;
                         _a.label = 4;
-                    case 4: return [2 /*return*/, true];
+                    case 4: return [3 /*break*/, 6];
                     case 5:
                         e_2 = _a.sent();
-                        return [2 /*return*/, e_2];
+                        throw new Error(e_2);
                     case 6: return [2 /*return*/];
                 }
             });
