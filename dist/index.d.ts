@@ -1,2 +1,2 @@
-export = mtaAPI;
-declare const mtaAPI: typeof import("./app").default;
+import MtaAPI from './app';
+export default MtaAPI;

@@ -1,7 +1,7 @@
-import * as path from 'path';
+import * as path from 'path'
 import * as fs from 'fs'
-import axios from 'axios';
-import { IMTAError, IMTAGetBy, IMTAServerInfo } from "./interfaces";
+import axios from 'axios'
+import { IMTAError, IMTAGetBy, IMTAServerInfo } from "./interfaces"
 
 export default class MtaAPI {
   private data: IMTAServerInfo[] | undefined

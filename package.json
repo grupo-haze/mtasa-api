@@ -4,7 +4,7 @@
   "description": "An module to capture MTA Server info",
   "main": "./dist/cjs/index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpileOnly src/index.ts",
+    "dev": "ts-node-dev --respawn --transpileOnly src/app.ts",
     "build": "tsc"
   },
   "files": [
