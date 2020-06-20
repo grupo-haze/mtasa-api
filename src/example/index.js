@@ -11,16 +11,28 @@ mtaAPI.debug = true
 // pt-BR: Você precisa dar build antes de usar a API
 
 mtaAPI.build()
-.then(() => {
-  const alanticServer = mtaAPI.getBy({ ip: '149.56.228.58', port: 22003 })
-  console.log(alanticServer)
-})
+  .then(() => {
+    const alanticServer = mtaAPI.getBy({ ip: '149.56.228.58', port: 22003 })
+    console.log(alanticServer)
+  })
+
+//
+// const example = async () => {
+//   await mtaAPI.build()
+//
+//   const alanticServer = mtaAPI.getBy({ ip: '149.56.228.58', port: 22003 })
+//   console.log(alanticServer)
+// }
+//
+
 
 // en-US: If you don't build before using it, you will launch a new Error
 // pt-BR: Se você não der build antes de usar, vai lançar um novo Erro
 
-// const otherMtaAPI = new MtaAPI ()
+//
+// const otherMtaAPI = new MtaAPI()
 //
 // otherMtaAPI.getBy({
 //   ip: '149.56.228.58'
 // })
+//
