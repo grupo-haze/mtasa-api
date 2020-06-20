@@ -2,7 +2,7 @@
   "name": "mtasa-api",
   "version": "0.1.0",
   "description": "An module to capture MTA Server info",
-  "main": "./dist/cjs/index.js",
+  "main": "./dist/index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpileOnly src/app.ts",
     "build": "tsc"
