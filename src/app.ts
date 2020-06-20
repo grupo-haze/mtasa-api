@@ -4,7 +4,7 @@ import axios from 'axios';
 import { IMTAError, IMTAGetBy, IMTAServerInfo } from "./interfaces";
 
 export default class MtaAPI {
-  private data: Array<IMTAServerInfo> | undefined
+  private data: IMTAServerInfo[] | undefined
   private requestStartsIn: number
   private requestEndsIn: number
   public waitTime: number
@@ -21,7 +21,7 @@ export default class MtaAPI {
     this.baseDir = path.resolve(__dirname)
     this.builded = false
     this.lastTime = 0
-    this.waitTime = 30;
+    this.waitTime = 30
     this.requestStartsIn = 0
     this.requestEndsIn = 0
     this.debug = false
@@ -82,7 +82,7 @@ export default class MtaAPI {
       this.useDebug('Requesting all...')
 
       axios.get(this.apiURL)
-        .then((response: { data: Array<object> }) => {
+        .then((response: { data: object[] }) => {
           const { data } = response
           this.useDebug('Request all ends')
 
@@ -146,7 +146,7 @@ export default class MtaAPI {
     return this.time2Seconds(time) >= this.waitTime
   }
 
-  private writeJSON(data: Array<IMTAServerInfo> | undefined) {
+  private writeJSON(data: IMTAServerInfo[] | undefined) {
     if (!data) {
       return false
     }
@@ -154,7 +154,7 @@ export default class MtaAPI {
       this.useDebug('Starting to write JSON')
       const toWrite = JSON.stringify({
         time: Date.now(),
-        data: data
+        data
       })
 
       fs.writeFile(path.resolve(this.baseDir, 'servers.json'), toWrite, 'utf8', err => {
@@ -204,12 +204,13 @@ export default class MtaAPI {
 
   private useDebug (data: any) {
     if (this.debug) {
+      // tslint:disable-next-line:no-console
       console.log((new Date()).toLocaleDateString(), data)
     }
   }
 
-  private buildServerInfo (data: Array<any>) : Array<IMTAServerInfo> {
-    const temp: Array<IMTAServerInfo> = []
+  private buildServerInfo (data: any[]) : IMTAServerInfo[] {
+    const temp: IMTAServerInfo[] = []
     this.useDebug('Starting loop to mount IMTAServerInfo')
     data.forEach(value => {
       const dt: IMTAServerInfo = {
@@ -232,7 +233,7 @@ export default class MtaAPI {
     return this.data
   }
 
-  private buildError (error: any): Boolean {
+  private buildError (error: any): boolean {
     let type = 'default'
     let message = error.message || ''
     if (error.response) {
@@ -246,8 +247,8 @@ export default class MtaAPI {
     }
 
     this.error = {
-      message: message,
-      type: type
+      message,
+      type
     }
 
     return false

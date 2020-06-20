@@ -279,6 +279,7 @@ var MtaAPI = /** @class */ (function () {
     };
     MtaAPI.prototype.useDebug = function (data) {
         if (this.debug) {
+            // tslint:disable-next-line:no-console
             console.log((new Date()).toLocaleDateString(), data);
         }
     };
