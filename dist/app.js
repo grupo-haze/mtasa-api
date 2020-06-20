@@ -93,6 +93,27 @@ var MtaAPI = /** @class */ (function () {
         }
         throw new Error('You should build first');
     };
+    MtaAPI.prototype.search = function (by) {
+        var _this = this;
+        var byKeys = Object.keys(by);
+        var data = [];
+        byKeys.forEach(function (key) {
+            var _a;
+            var temp = (_a = _this.data) === null || _a === void 0 ? void 0 : _a.filter(function (d) {
+                // @ts-ignore
+                if (d[key]) {
+                    // @ts-ignore
+                    return d[key].toLowerCase().includes(by[key].toLowerCase());
+                }
+                return false;
+            });
+            data.push({
+                label: key,
+                value: temp
+            });
+        });
+        return data;
+    };
     MtaAPI.prototype.setTick = function (seconds) {
         this.waitTime = this.seconds2Time(seconds);
         this.useDebug("In the next tick 'waitTime' will be updated to " + seconds + " seconds");
@@ -293,7 +314,7 @@ var MtaAPI = /** @class */ (function () {
                 ip: value.ip || '',
                 maxplayers: value.maxplayers || 0,
                 keep: value.keep === 1,
-                players: value.players || 0,
+                playersCount: value.players || 0,
                 version: value.version || '',
                 requirePassword: value.password === 1,
                 port: value.port || ''

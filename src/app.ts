@@ -1,7 +1,7 @@
 import * as path from 'path'
 import * as fs from 'fs'
 import axios from 'axios'
-import { IMTAError, IMTAGetBy, IMTAServerInfo } from "./interfaces"
+import {IMTAError, IMTAGetBy, IMTASearchBy, IMTAServerInfo} from "./interfaces"
 
 export default class MtaAPI {
   private data: IMTAServerInfo[] | undefined
@@ -49,6 +49,30 @@ export default class MtaAPI {
     }
 
     throw new Error('You should build first')
+  }
+
+  public search (by: IMTASearchBy) {
+    const byKeys: string[] = Object.keys(by)
+    const data: object[] = []
+
+    byKeys.forEach((key: string) => {
+      const temp = this.data?.filter(d => {
+        // @ts-ignore
+        if (d[key]) {
+          // @ts-ignore
+          return d[key].toLowerCase().includes(by[key].toLowerCase())
+        }
+
+        return false
+      })
+
+      data.push({
+        label: key,
+        value: temp
+      })
+    })
+
+    return data
   }
 
   public setTick (seconds: number) {
@@ -218,7 +242,7 @@ export default class MtaAPI {
         ip: value.ip || '',
         maxplayers: value.maxplayers || 0,
         keep: value.keep === 1,
-        players: value.players || 0,
+        playersCount: value.players || 0,
         version: value.version || '',
         requirePassword: value.password === 1,
         port: value.port || ''

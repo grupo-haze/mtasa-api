@@ -1,4 +1,4 @@
-import { IMTAError, IMTAGetBy, IMTAServerInfo } from "./interfaces";
+import { IMTAError, IMTAGetBy, IMTASearchBy, IMTAServerInfo } from "./interfaces";
 export default class MtaAPI {
     private data;
     private requestStartsIn;
@@ -15,6 +15,7 @@ export default class MtaAPI {
     constructor();
     getAll(): IMTAServerInfo[] | undefined;
     getBy(opts?: IMTAGetBy): IMTAServerInfo[] | undefined;
+    search(by: IMTASearchBy): object[];
     setTick(seconds: number): void;
     build(): Promise<any>;
     isBuilded(): boolean;

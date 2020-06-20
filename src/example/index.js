@@ -24,7 +24,8 @@ mtaAPI.build()
 //   console.log(alanticServer)
 // }
 //
-
+// example()
+//
 
 // en-US: If you don't build before using it, you will launch a new Error
 // pt-BR: Se você não der build antes de usar, vai lançar um novo Erro
