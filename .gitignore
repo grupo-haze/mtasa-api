@@ -118,3 +118,4 @@ web_modules/
 .idea
 package-lock.json
 src/servers.json
+dist/servers.json
