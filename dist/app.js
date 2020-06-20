@@ -1,3 +1,23 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,52 +54,59 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import path from 'path';
-import fs from 'fs';
-import axios from 'axios';
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var path = __importStar(require("path"));
+var fs = __importStar(require("fs"));
+var axios_1 = __importDefault(require("axios"));
 var MtaAPI = /** @class */ (function () {
     function MtaAPI() {
-        this.ip = '';
-        this.requestStartsIn = 0;
-        this.requestEndsIn = 0;
-        this.waitTime = 30;
-        this.lastTime = 0;
         this.interval = false;
         this.baseDir = path.resolve(__dirname);
         this.builded = false;
-        this.debug = true;
+        this.lastTime = 0;
+        this.waitTime = 30;
+        this.requestStartsIn = 0;
+        this.requestEndsIn = 0;
+        this.debug = false;
         this.apiURL = 'https://mtasa.com/api/';
     }
     MtaAPI.prototype.getAll = function () {
-        return this.data;
+        if (this.builded) {
+            return this.data;
+        }
+        throw new Error('You should build first');
     };
     MtaAPI.prototype.getBy = function (opts) {
         var _a;
         if (opts === void 0) { opts = { ip: '', port: 0 }; }
-        return (_a = this.data) === null || _a === void 0 ? void 0 : _a.filter(function (d) {
-            if (!opts.port) {
-                return d.ip === opts.ip;
-            }
-            return d.ip === opts.ip && d.port === opts.port;
-        });
+        if (this.builded) {
+            return (_a = this.data) === null || _a === void 0 ? void 0 : _a.filter(function (d) {
+                if (!opts.port) {
+                    return d.ip === opts.ip;
+                }
+                return d.ip === opts.ip && d.port === opts.port;
+            });
+        }
+        throw new Error('You should build first');
+    };
+    MtaAPI.prototype.setTickTime = function (seconds) {
+        this.waitTime = this.seconds2Time(seconds);
+        this.useDebug("In the next tick 'waitTime' will be updated to " + seconds + " seconds");
     };
     MtaAPI.prototype.build = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this.existsJSON()) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.readJSON()];
+                        if (!!this.builded) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.startTick()];
                     case 1:
                         _a.sent();
                         _a.label = 2;
-                    case 2:
-                        if (!!this.builded) return [3 /*break*/, 4];
-                        return [4 /*yield*/, this.startTick()];
-                    case 3:
-                        _a.sent();
-                        _a.label = 4;
-                    case 4: return [2 /*return*/];
+                    case 2: return [2 /*return*/];
                 }
             });
         });
@@ -93,12 +120,15 @@ var MtaAPI = /** @class */ (function () {
     MtaAPI.prototype.seconds2Time = function (seconds) {
         return seconds * 1000;
     };
+    MtaAPI.prototype.lastRequestTime = function () {
+        return ((this.requestEndsIn - this.requestStartsIn)) || 0;
+    };
     MtaAPI.prototype.requestAll = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
             _this.requestStartsIn = Date.now();
             _this.useDebug('Requesting all...');
-            axios.get(_this.apiURL)
+            axios_1.default.get(_this.apiURL)
                 .then(function (response) {
                 var data = response.data;
                 _this.useDebug('Request all ends');
@@ -124,10 +154,18 @@ var MtaAPI = /** @class */ (function () {
                         }
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 3, , 4]);
+                        _a.trys.push([1, 6, , 7]);
+                        if (!!this.existsJSON()) return [3 /*break*/, 3];
                         return [4 /*yield*/, this.buildData()];
                     case 2:
                         _a.sent();
+                        return [3 /*break*/, 5];
+                    case 3: return [4 /*yield*/, this.readJSON()];
+                    case 4:
+                        _a.sent();
+                        this.builded = true;
+                        _a.label = 5;
+                    case 5:
                         this.interval = setInterval(function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0: return [4 /*yield*/, this.buildData()];
@@ -137,12 +175,12 @@ var MtaAPI = /** @class */ (function () {
                             }
                         }); }); }, this.seconds2Time(this.waitTime));
                         this.useDebug("Tick started with " + this.waitTime + " seconds");
-                        return [3 /*break*/, 4];
-                    case 3:
+                        return [3 /*break*/, 7];
+                    case 6:
                         e_1 = _a.sent();
                         this.buildError(e_1);
-                        throw new Error(e_1);
-                    case 4: return [2 /*return*/];
+                        throw e_1;
+                    case 7: return [2 /*return*/];
                 }
             });
         });
@@ -170,7 +208,7 @@ var MtaAPI = /** @class */ (function () {
                         this.writeJSON(this.data);
                         this.builded = true;
                         _a.label = 4;
-                    case 4: return [3 /*break*/, 6];
+                    case 4: return [2 /*return*/, true];
                     case 5:
                         e_2 = _a.sent();
                         return [2 /*return*/, e_2];
@@ -178,13 +216,6 @@ var MtaAPI = /** @class */ (function () {
                 }
             });
         });
-    };
-    /**
-     * Returns time in seconds
-     * @return number
-     */
-    MtaAPI.prototype.lastRequestTime = function () {
-        return ((this.requestEndsIn - this.requestStartsIn)) || 0;
     };
     MtaAPI.prototype.checkToGenerateNewJSON = function () {
         var time = Date.now() - this.lastTime;
@@ -289,14 +320,6 @@ var MtaAPI = /** @class */ (function () {
         };
         return false;
     };
-    MtaAPI.prototype.setTickTime = function (seconds) {
-        this.waitTime = this.seconds2Time(seconds);
-        this.useDebug("In the next tick 'waitTime' will be updated to " + seconds + " seconds");
-    };
     return MtaAPI;
 }());
-export default MtaAPI;
-var mta = new MtaAPI();
-mta.build()
-    .then(function () {
-});
+exports.default = MtaAPI;

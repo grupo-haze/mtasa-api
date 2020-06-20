@@ -1,44 +1,62 @@
-import path from 'path'
-import fs from 'fs'
-import axios from 'axios'
-import { IMTAError, IMTAGetBy, IMTAServerInfo } from "./interfaces"
+import * as path from 'path';
+import * as fs from 'fs'
+import axios from 'axios';
+import { IMTAError, IMTAGetBy, IMTAServerInfo } from "./interfaces";
 
-class MtaAPI {
-  private ip: string = ''
-  private data: Array<IMTAServerInfo> | undefined
-  private requestStartsIn: number = 0
-  private requestEndsIn: number = 0
-  private waitTime: number = 30
-  private lastTime: number = 0
-  private interval: any = false
-  private baseDir: string = path.resolve(__dirname)
-  private builded: boolean = false
+export default class MtaAPI {
+  private data: Array<IMTAServerInfo> | undefined;
+  private requestStartsIn: number;
+  private requestEndsIn: number;
+  public waitTime: number;
+  private lastTime: number;
+  private interval: any = false;
+  private readonly baseDir: string;
+  private builded: boolean;
 
-  public debug: boolean = true
+  public debug: boolean
   public error: IMTAError | undefined
-  public apiURL: string = 'https://mtasa.com/api/'
+  public apiURL: string
+
+  constructor () {
+    this.baseDir = path.resolve(__dirname)
+    this.builded = false
+    this.lastTime = 0
+    this.waitTime = 30;
+    this.requestStartsIn = 0
+    this.requestEndsIn = 0
+    this.debug = false
+    this.apiURL = 'https://mtasa.com/api/'
+  }
 
   public getAll () {
-    return this.data
+    if (this.builded) {
+      return this.data
+    }
+    throw new Error('You should build first')
   }
 
   public getBy(opts: IMTAGetBy = { ip: '', port: 0 }) {
-    return this.data?.filter(d => {
-      if (!opts.port) {
-        return d.ip === opts.ip
-      }
+    if (this.builded) {
+      return this.data?.filter(d => {
+        if (!opts.port) {
+          return d.ip === opts.ip
+        }
 
-      return d.ip === opts.ip && d.port === opts.port
-    })
-  }
-
-  public async build () {
-    if (this.existsJSON()) {
-      await this.readJSON()
+        return d.ip === opts.ip && d.port === opts.port
+      })
     }
 
+    throw new Error('You should build first')
+  }
+
+  public setTickTime (seconds: number) {
+    this.waitTime = this.seconds2Time(seconds)
+    this.useDebug(`In the next tick 'waitTime' will be updated to ${seconds} seconds`)
+  }
+
+  public async build (): Promise<any> {
     if (!this.builded) {
-      await this.startTick()
+      await this.startTick();
     }
   }
 
@@ -54,6 +72,10 @@ class MtaAPI {
     return seconds * 1000
   }
 
+  public lastRequestTime (): number {
+    return ((this.requestEndsIn - this.requestStartsIn)) || 0
+  }
+
   private requestAll (): Promise<any> {
     return new Promise((resolve, reject) => {
       this.requestStartsIn = Date.now()
@@ -66,7 +88,6 @@ class MtaAPI {
 
           this.requestEndsIn = Date.now()
           this.useDebug(`Request time: ${this.time2Seconds(this.lastRequestTime())}`)
-
           resolve(this.buildServerInfo(data))
         })
         .catch((e: any) => {
@@ -82,18 +103,24 @@ class MtaAPI {
     }
 
     try {
-      await this.buildData()
+      if (!this.existsJSON()) {
+        await this.buildData()
+      } else {
+        await this.readJSON()
+        this.builded = true
+      }
 
       this.interval = setInterval(async () => { await this.buildData() }, this.seconds2Time(this.waitTime))
       this.useDebug(`Tick started with ${this.waitTime} seconds`)
     } catch (e) {
       this.buildError(e)
-      throw new Error(e)
+      throw e
     }
   }
 
   private async buildData () {
     try {
+
       await this.requestAll()
       if (this.existsJSON()) {
         await this.readJSON()
@@ -104,19 +131,12 @@ class MtaAPI {
         }
       } else {
         this.writeJSON(this.data)
-        this.builded = true
+        this.builded = true;
       }
+      return true;
     } catch (e) {
       return e
     }
-  }
-
-  /**
-   * Returns time in seconds
-   * @return number
-   */
-  public lastRequestTime (): number {
-    return ((this.requestEndsIn - this.requestStartsIn)) || 0
   }
 
   private checkToGenerateNewJSON () {
@@ -153,7 +173,7 @@ class MtaAPI {
     }
   }
 
-  private readJSON () {
+  private readJSON (): Promise<any> {
     return new Promise((resolve, reject) => {
       this.useDebug('Starting to read JSON File')
       const stream = fs.readFile(path.resolve(path.resolve(this.baseDir, 'servers.json')), 'utf-8', (err, data) => {
@@ -232,11 +252,4 @@ class MtaAPI {
 
     return false
   }
-
-  public setTickTime (seconds: number) {
-    this.waitTime = this.seconds2Time(seconds)
-    this.useDebug(`In the next tick 'waitTime' will be updated to ${seconds} seconds`)
-  }
 }
-
-export default MtaAPI

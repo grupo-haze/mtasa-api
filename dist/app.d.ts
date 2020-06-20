@@ -1,31 +1,28 @@
 import { IMTAError, IMTAGetBy, IMTAServerInfo } from "./interfaces";
-declare class MtaAPI {
-    private ip;
+export default class MtaAPI {
     private data;
     private requestStartsIn;
     private requestEndsIn;
-    private waitTime;
+    waitTime: number;
     private lastTime;
     private interval;
-    private baseDir;
+    private readonly baseDir;
     private builded;
     debug: boolean;
     error: IMTAError | undefined;
     apiURL: string;
+    constructor();
     getAll(): IMTAServerInfo[] | undefined;
     getBy(opts?: IMTAGetBy): IMTAServerInfo[] | undefined;
-    build(): Promise<void>;
+    setTickTime(seconds: number): void;
+    build(): Promise<any>;
     isBuilded(): boolean;
     time2Seconds(time: number): number;
     seconds2Time(seconds: number): number;
+    lastRequestTime(): number;
     private requestAll;
     private startTick;
     private buildData;
-    /**
-     * Returns time in seconds
-     * @return number
-     */
-    lastRequestTime(): number;
     private checkToGenerateNewJSON;
     private writeJSON;
     private readJSON;
@@ -33,6 +30,4 @@ declare class MtaAPI {
     private useDebug;
     private buildServerInfo;
     private buildError;
-    setTickTime(seconds: number): void;
 }
-export default MtaAPI;

@@ -3,12 +3,9 @@
   "version": "0.1.0",
   "description": "An module to capture MTA Server info",
   "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "type": "module",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpileOnly src/index.ts",
-    "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -p tsconfig.json"
   },
   "files": [
     "dist/"
@@ -37,6 +34,7 @@
     "typescript": "^3.9.5"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.155",
     "axios": "^0.19.2"
   }
 }
