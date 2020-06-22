@@ -16,7 +16,7 @@
 ```js
 import MtaSA from 'mtasa-api'
 
-const mtaAPI = new MtaSA.api()
+const mtaAPI = new MtaSA()
 
 const example = async () => {
    await mtaAPI.build() // Build the API first
