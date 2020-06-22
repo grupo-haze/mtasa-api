@@ -1,3 +1,5 @@
-import MtaAPI from './app'
+import api from './app'
 
-module.exports = MtaAPI
+export {
+  api
+}

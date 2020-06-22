@@ -1,6 +1,6 @@
-const MtaAPI = require('../../dist')
+const MtaSA = require('../../dist')
 
-const mtaAPI = new MtaAPI()
+const mtaAPI = new MtaSA.api()
 
 // en-US: If set debug true, the steps are shown
 // pt-BR: Se você colocar debug como true, os passos vão ser mostrados
