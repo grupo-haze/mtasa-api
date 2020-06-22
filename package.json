@@ -1,7 +1,7 @@
 {
   "name": "mtasa-api",
-  "version": "0.1.0",
-  "description": "An module to capture MTA Server info",
+  "version": "0.2.1",
+  "description": "Capture information from MTA: SA servers easily.",
   "main": "./dist/index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpileOnly src/app.ts",
@@ -18,7 +18,8 @@
     "mtasa",
     "mta",
     "api",
-    "typescript"
+    "typescript",
+    "intellisense"
   ],
   "author": "Jeffyter Saraiva <iJhefe>",
   "license": "MIT",
