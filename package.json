@@ -1,6 +1,6 @@
 {
   "name": "mtasa-api",
-  "version": "0.2.21",
+  "version": "0.2.22",
   "description": "Capture information from MTA: SA servers easily.",
   "main": "./dist/index.js",
   "scripts": {
