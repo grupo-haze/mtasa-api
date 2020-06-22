@@ -1,10 +1,10 @@
 {
   "name": "mtasa-api",
-  "version": "0.2.1",
+  "version": "0.2.21",
   "description": "Capture information from MTA: SA servers easily.",
   "main": "./dist/index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpileOnly src/app.ts",
+    "dev": "ts-node-dev --respawn --transpileOnly src/index.ts",
     "build": "tsc"
   },
   "files": [

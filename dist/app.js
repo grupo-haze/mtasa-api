@@ -68,7 +68,7 @@ var MtaAPI = /** @class */ (function () {
         this.builded = false;
         this.started = false;
         this.lastTime = 0;
-        this.waitTime = 30;
+        this.waitTime = 30000;
         this.requestStartsIn = 0;
         this.requestEndsIn = 0;
         this.debug = false;
@@ -115,8 +115,8 @@ var MtaAPI = /** @class */ (function () {
         return data;
     };
     MtaAPI.prototype.setTick = function (seconds) {
-        this.waitTime = this.seconds2Time(seconds);
         this.useDebug("In the next tick 'waitTime' will be updated to " + seconds + " seconds");
+        this.waitTime = this.seconds2Time(seconds);
     };
     MtaAPI.prototype.build = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -197,8 +197,8 @@ var MtaAPI = /** @class */ (function () {
                                     _a.sent();
                                     return [2 /*return*/];
                             }
-                        }); }); }, this.seconds2Time(this.waitTime));
-                        this.useDebug("Tick started with " + this.waitTime + " seconds");
+                        }); }); }, this.waitTime);
+                        this.useDebug("Tick started with " + this.time2Seconds(this.waitTime) + " seconds");
                         return [3 /*break*/, 7];
                     case 6:
                         e_1 = _a.sent();

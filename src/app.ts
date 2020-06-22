@@ -23,7 +23,7 @@ export default class MtaAPI {
     this.builded = false
     this.started = false
     this.lastTime = 0
-    this.waitTime = 30
+    this.waitTime = 30000
     this.requestStartsIn = 0
     this.requestEndsIn = 0
     this.debug = false
@@ -76,8 +76,8 @@ export default class MtaAPI {
   }
 
   public setTick (seconds: number) {
-    this.waitTime = this.seconds2Time(seconds)
     this.useDebug(`In the next tick 'waitTime' will be updated to ${seconds} seconds`)
+    this.waitTime = this.seconds2Time(seconds)
   }
 
   public async build (): Promise<any> {
@@ -138,8 +138,8 @@ export default class MtaAPI {
         this.builded = true
       }
 
-      this.interval = setInterval(async () => { await this.buildData() }, this.seconds2Time(this.waitTime))
-      this.useDebug(`Tick started with ${this.waitTime} seconds`)
+      this.interval = setInterval(async () => { await this.buildData() }, this.waitTime)
+      this.useDebug(`Tick started with ${this.time2Seconds(this.waitTime)} seconds`)
     } catch (e) {
       this.buildError(e)
       throw e
