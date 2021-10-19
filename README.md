@@ -1,30 +1,41 @@
-## MTA:SA API
-##### The Simplest way to obtain data from MTASA servers.
+# MTA:SA API
 
----
+> Get information from your MTA:SA server easily and quickly.
 
-#### Functions
+## Install MTA:SA API
+
+To install MTA:SA API, follow these steps:
+
+npm
+```
+npm install mtasa-api
+```
+
+yarn
+```
+yarn add mtasa-api
+```
+
+## Functions
 
 - getAll
 - getBy({ ip: string, port?: number } )
-- search ({ name?: string, ip?: number, version?: string })
-- setTick(seconds: int)
+- search({ name?: string, ip?: number, version?: string })
+- setDelay({ seconds: number })
 
----
+
 ### Example
 
 ```js
-import MtaSA from 'mtasa-api'
-
-const mtaAPI = new MtaSA()
+import { MtaAPI } from 'mtasa-api'
 
 const example = async () => {
-   await mtaAPI.build() // Build the API first
+   const api = new MtaAPI();
 
-   const alanticServer = mtaAPI.getBy({ ip: '149.56.228.58', port: 22003 })
-   console.log(alanticServer) 
+   const brasilGamingRealista = await api.getBy({ ip: '51.222.149.10', port: 22003 });
+   console.log('example server:', brasilGamingRealista);
 }
 
- example()
+example()
 ```
    
