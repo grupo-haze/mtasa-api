@@ -4,7 +4,7 @@
   "description": "Capture information from MTA: SA servers easily.",
   "main": "./dist/index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpileOnly src/index.ts",
+    "dev": "set DEBUG=* & ts-node-dev --respawn src/example/example.ts",
     "build": "tsc"
   },
   "files": [
@@ -29,12 +29,14 @@
   "homepage": "https://github.com/grupo-haze/mtasa-api#readme",
   "devDependencies": {
     "@types/node": "^14.0.13",
-    "ts-node-dev": "^1.0.0-pre.49",
+    "ts-node-dev": "^1.1.8",
     "tslint": "^6.1.2",
-    "typescript": "^3.9.5"
+    "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.155",
-    "axios": "^0.19.2"
+    "@types/debug": "^4.1.7",
+    "axios": "^0.19.2",
+    "debug": "^4.3.2",
+    "ms-converter": "^1.0.1"
   }
 }
