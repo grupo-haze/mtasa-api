@@ -1,9 +1,10 @@
 import axios, { AxiosInstance } from 'axios';
-import { IMTAServerInfo } from './interfaces';
+import parse from 'parse-json';
+import { MTARawData } from './interfaces';
 import { ms } from 'ms-converter';
 import debug from 'debug';
 import { MtaAPI } from './MtaAPI';
-import { OfflineAPIException } from './errors';
+import { InvalidAPIResponseException, OfflineAPIException } from './errors';
 
 export class APIRequest {
   private readonly log = debug(MtaAPI.name).extend(APIRequest.name);
@@ -17,17 +18,29 @@ export class APIRequest {
   constructor(instance?: AxiosInstance) {
     this.instance = instance || axios.create({
       baseURL: this.url,
-      timeout: this.timeout
+      timeout: this.timeout,
+      headers: {
+        "Content-Type": "application/json"
+      }
     });
   }
 
-  async find() {
+  async find(): Promise<MTARawData[]> {
     this.log('requesting data')
-    const { data } = await this.instance.get<IMTAServerInfo[]>('/');
+    const request = await this.instance.get<MTARawData[]>('/');
 
-    this.log('response : ', data?.length);
+    let data = request.data;
+    if (typeof request.data === 'string') {
+      try {
+        data = parse(request.data);
+      } catch (e) {
+        throw new InvalidAPIResponseException(request.data, e as Error);
+      }
+    }
 
-    if (!data || !data?.toString().trim()) {
+    this.log('response : ', request.data?.length);
+
+    if (!data || !data?.length) {
       throw new OfflineAPIException();
     }
 
