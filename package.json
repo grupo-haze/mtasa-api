@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@types/debug": "^4.1.7",
-    "axios": "^0.19.2",
+    "axios": "^0.21.2",
     "debug": "^4.3.2",
     "ms-converter": "^1.0.1",
     "parse-json": "^5.2.0"
